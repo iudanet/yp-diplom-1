@@ -12,6 +12,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	timeoutPing    = 5 * time.Second
+	timeoutMigrate = 20 * time.Second
+)
+
 type PostgresRepo struct {
 	db *sql.DB
 }
@@ -27,7 +32,7 @@ func NewPostgresRepo(ctx context.Context, dsn string) (repo.Repositories, error)
 			return err
 		}
 
-		ctxPing, cancel := context.WithTimeout(ctx, 5*time.Second)
+		ctxPing, cancel := context.WithTimeout(ctx, timeoutPing)
 		defer cancel()
 
 		if err := db.PingContext(ctxPing); err != nil {
@@ -44,7 +49,9 @@ func NewPostgresRepo(ctx context.Context, dsn string) (repo.Repositories, error)
 
 	// Применяем миграции
 	err = retry.WithRetry(func() error {
-		return migrator.Migrate(db)
+		ctxMigrate, cancel := context.WithTimeout(ctx, timeoutMigrate)
+		defer cancel()
+		return migrator.Migrate(ctxMigrate, db)
 	})
 	if err != nil {
 		db.Close()

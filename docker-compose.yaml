@@ -7,14 +7,21 @@ services:
       POSTGRES_USER: gofermart
       POSTGRES_PASSWORD: yandex
       POSTGRES_DB: gofermart_db
+    command: >
+          postgres -c 'shared_buffers=128MB'
+          -c 'max_connections=1000'
+          -c 'fsync=off'
+          -c 'synchronous_commit=off'
+          -c 'full_page_writes=off'
+          -c 'client_min_messages=warning'
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
+      interval: 1s
+      timeout: 1s
       retries: 5
 
 
