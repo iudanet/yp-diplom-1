@@ -68,7 +68,8 @@ func TestConfig(t *testing.T) {
 			name:   "string_representation",
 			config: New(),
 			check: func(t *testing.T, cfg *Config) {
-				expected := "HTTPAddress: localhost:8080, DatabaseURI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable, AccrualSystemAddress: http://localhost:8081"
+				// expected := "HTTPAddress: localhost:8080, DatabaseURI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable, AccrualSystemAddress: http://localhost:8081"
+				expected := "Config:\n HTTPAddress: localhost:8080 \n DatabaseURI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable\n AccrualSystemAddress: http://localhost:8081\n"
 				assert.Equal(t, expected, cfg.String())
 			},
 		},

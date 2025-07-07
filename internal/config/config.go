@@ -33,11 +33,18 @@ func (c *Config) FlagParse() {
 	flag.Parse()
 }
 func (c *Config) EnvParse() {
-	c.HTTPAddress = os.Getenv("RUN_ADDRESS")
-	c.DatabaseURI = os.Getenv("DATABASE_URI")
-	c.AccrualSystemAddress = os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
+	if os.Getenv("RUN_ADDRESS") != "" {
+		c.HTTPAddress = os.Getenv("RUN_ADDRESS")
+	}
+	if os.Getenv("DATABASE_URI") != "" {
+		c.DatabaseURI = os.Getenv("DATABASE_URI")
+	}
+	if os.Getenv("ACCRUAL_SYSTEM_ADDRESS") != "" {
+		c.AccrualSystemAddress = os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
+
+	}
 }
 
 func (c *Config) String() string {
-	return fmt.Sprintf("HTTPAddress: %s, DatabaseURI: %s, AccrualSystemAddress: %s", c.HTTPAddress, c.DatabaseURI, c.AccrualSystemAddress)
+	return fmt.Sprintf("Config:\n HTTPAddress: %s \n DatabaseURI: %s\n AccrualSystemAddress: %s\n", c.HTTPAddress, c.DatabaseURI, c.AccrualSystemAddress)
 }
