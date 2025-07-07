@@ -12,12 +12,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var _ repo.Repositories = (*postgresRepo)(nil)
+
 const (
 	timeoutPing    = 5 * time.Second
 	timeoutMigrate = 20 * time.Second
 )
 
-type PostgresRepo struct {
+type postgresRepo struct {
 	db *sql.DB
 }
 
@@ -47,16 +49,19 @@ func NewPostgresRepo(ctx context.Context, dsn string) (repo.Repositories, error)
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// Применяем миграции
-	err = retry.WithRetry(func() error {
+	return &postgresRepo{db: db}, nil
+}
+
+func (r *postgresRepo) Migrate(ctx context.Context) error {
+	err := retry.WithRetry(func() error {
 		ctxMigrate, cancel := context.WithTimeout(ctx, timeoutMigrate)
 		defer cancel()
-		return migrator.Migrate(ctxMigrate, db)
+		return migrator.Migrate(ctxMigrate, r.db)
 	})
 	if err != nil {
-		db.Close()
-		return nil, fmt.Errorf("migration failed: %w", err)
+		r.db.Close()
+		return fmt.Errorf("migration failed: %w", err)
 	}
+	return nil
 
-	return &PostgresRepo{db: db}, nil
 }

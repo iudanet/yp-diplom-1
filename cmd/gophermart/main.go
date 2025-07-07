@@ -16,9 +16,15 @@ func main() {
 	log.Println(cfg)
 	ctx := context.Background()
 	// Инициализация репозитория
-	_, err := postgres.NewPostgresRepo(ctx, cfg.DatabaseURI)
+	repo, err := postgres.NewPostgresRepo(ctx, cfg.DatabaseURI)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
+	err = repo.Migrate(ctx)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
 }
