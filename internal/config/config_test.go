@@ -3,84 +3,87 @@ package config
 import (
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig(t *testing.T) {
-	t.Run("default values", func(t *testing.T) {
-		cfg := New()
-		if cfg.HttpAddress != "localhost:8080" {
-			t.Errorf("expected HttpAddress 'localhost:8080', got '%s'", cfg.HttpAddress)
-		}
-		if cfg.DatabaseUri != "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" {
-			t.Errorf("unexpected default DatabaseUri: %s", cfg.DatabaseUri)
-		}
-		if cfg.AccrualSystemAddress != "http://localhost:8081" {
-			t.Errorf("unexpected default AccrualSystemAddress: %s", cfg.AccrualSystemAddress)
-		}
-	})
+	tests := []struct {
+		name     string
+		setup    func()
+		teardown func()
+		config   *Config
+		check    func(t *testing.T, cfg *Config)
+	}{
+		{
+			name:   "default_values",
+			config: New(),
+			check: func(t *testing.T, cfg *Config) {
+				assert.Equal(t, "localhost:8080", cfg.HTTPAddress)
+				assert.Equal(t, "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable", cfg.DatabaseURI)
+				assert.Equal(t, "http://localhost:8081", cfg.AccrualSystemAddress)
+			},
+		},
+		{
+			name: "flag_parsing",
+			setup: func() {
+				oldArgs := os.Args
+				os.Args = []string{
+					"cmd",
+					"-a", "localhost:1010",
+					"-d", "postgres://user:pass@localhost66:5432/testdb",
+					"-r", "http://accrual:8082",
+				}
+				t.Cleanup(func() { os.Args = oldArgs })
+			},
+			config: New(),
+			check: func(t *testing.T, cfg *Config) {
+				cfg.FlagParse()
+				assert.Equal(t, "localhost:1010", cfg.HTTPAddress)
+				assert.Equal(t, "postgres://user:pass@localhost66:5432/testdb", cfg.DatabaseURI)
+				assert.Equal(t, "http://accrual:8082", cfg.AccrualSystemAddress)
+			},
+		},
+		{
+			name: "env_parsing",
+			setup: func() {
+				os.Setenv("RUN_ADDRESS", "localhost:9091")
+				os.Setenv("DATABASE_URI", "postgres://envuser:envpass@localhost:5432/envdb")
+				os.Setenv("ACCRUAL_SYSTEM_ADDRESS", "http://envaccrual:8083")
+			},
+			teardown: func() {
+				os.Unsetenv("RUN_ADDRESS")
+				os.Unsetenv("DATABASE_URI")
+				os.Unsetenv("ACCRUAL_SYSTEM_ADDRESS")
+			},
+			config: New(),
+			check: func(t *testing.T, cfg *Config) {
+				cfg.EnvParse()
+				assert.Equal(t, "localhost:9091", cfg.HTTPAddress)
+				assert.Equal(t, "postgres://envuser:envpass@localhost:5432/envdb", cfg.DatabaseURI)
+				assert.Equal(t, "http://envaccrual:8083", cfg.AccrualSystemAddress)
+			},
+		},
+		{
+			name:   "string_representation",
+			config: New(),
+			check: func(t *testing.T, cfg *Config) {
+				expected := "HTTPAddress: localhost:8080, DatabaseURI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable, AccrualSystemAddress: http://localhost:8081"
+				assert.Equal(t, expected, cfg.String())
+			},
+		},
+	}
 
-	t.Run("flag parsing", func(t *testing.T) {
-		// Сохраняем оригинальные аргументы
-		oldArgs := os.Args
-		defer func() { os.Args = oldArgs }()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.setup != nil {
+				tt.setup()
+			}
+			if tt.teardown != nil {
+				t.Cleanup(tt.teardown)
+			}
 
-		// Устанавливаем тестовые аргументы
-		os.Args = []string{
-			"cmd",
-			"-a", "localhost:9090",
-			"-d", "postgres://user:pass@localhost:5432/testdb",
-			"-r", "http://accrual:8082",
-		}
-
-		cfg := New()
-		cfg.FlagParse()
-
-		if cfg.HttpAddress != "localhost:9090" {
-			t.Errorf("expected HttpAddress 'localhost:9090', got '%s'", cfg.HttpAddress)
-		}
-		if cfg.DatabaseUri != "postgres://user:pass@localhost:5432/testdb" {
-			t.Errorf("unexpected DatabaseUri: %s", cfg.DatabaseUri)
-		}
-		if cfg.AccrualSystemAddress != "http://accrual:8082" {
-			t.Errorf("unexpected AccrualSystemAddress: %s", cfg.AccrualSystemAddress)
-		}
-	})
-
-	t.Run("env parsing", func(t *testing.T) {
-		// Сохраняем оригинальные переменные окружения
-		oldHttpAddr := os.Getenv("RUN_ADDRESS")
-		oldDbUri := os.Getenv("DATABASE_URI")
-		oldAccrualAddr := os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
-		defer func() {
-			os.Setenv("RUN_ADDRESS", oldHttpAddr)
-			os.Setenv("DATABASE_URI", oldDbUri)
-			os.Setenv("ACCRUAL_SYSTEM_ADDRESS", oldAccrualAddr)
-		}()
-
-		// Устанавливаем тестовые переменные окружения
-		os.Setenv("RUN_ADDRESS", "localhost:9091")
-		os.Setenv("DATABASE_URI", "postgres://envuser:envpass@localhost:5432/envdb")
-		os.Setenv("ACCRUAL_SYSTEM_ADDRESS", "http://envaccrual:8083")
-
-		cfg := New()
-		cfg.EnvParse()
-
-		if cfg.HttpAddress != "localhost:9091" {
-			t.Errorf("expected HttpAddress 'localhost:9091', got '%s'", cfg.HttpAddress)
-		}
-		if cfg.DatabaseUri != "postgres://envuser:envpass@localhost:5432/envdb" {
-			t.Errorf("unexpected DatabaseUri: %s", cfg.DatabaseUri)
-		}
-		if cfg.AccrualSystemAddress != "http://envaccrual:8083" {
-			t.Errorf("unexpected AccrualSystemAddress: %s", cfg.AccrualSystemAddress)
-		}
-	})
-
-	t.Run("string representation", func(t *testing.T) {
-		cfg := New()
-		expected := "HttpAddress: localhost:8080, DatabaseUri: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable, AccrualSystemAddress: http://localhost:8081"
-		if cfg.String() != expected {
-			t.Errorf("expected string '%s', got '%s'", expected, cfg.String())
-		}
-	})
+			tt.check(t, tt.config)
+		})
+	}
 }
