@@ -14,6 +14,7 @@ type Config struct {
 	// dsn "postgres://postgres:postgres@localhost:5432/metrics_db?sslmode=disable"
 	DatabaseURI          string
 	AccrualSystemAddress string
+	Migrate              bool
 }
 
 func New() *Config {
@@ -21,6 +22,7 @@ func New() *Config {
 		HTTPAddress:          "localhost:8080",
 		DatabaseURI:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
 		AccrualSystemAddress: "http://localhost:8081",
+		Migrate:              true,
 	}
 }
 
@@ -32,6 +34,12 @@ func (c *Config) FlagParse() {
 		"r",
 		c.AccrualSystemAddress,
 		"accrual system address | env ACCRUAL_SYSTEM_ADDRESS ",
+	)
+	flag.BoolVar(
+		&c.Migrate,
+		"m",
+		c.Migrate,
+		"migrate database | env MIGRATE ",
 	)
 
 	flag.Parse()
@@ -46,6 +54,9 @@ func (c *Config) EnvParse() {
 	}
 	if os.Getenv("ACCRUAL_SYSTEM_ADDRESS") != "" {
 		c.AccrualSystemAddress = os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
+	}
+	if os.Getenv("MIGRATE") != "" {
+		c.Migrate = os.Getenv("MIGRATE") == "true"
 	}
 }
 
