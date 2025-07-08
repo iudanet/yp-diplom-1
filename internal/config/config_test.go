@@ -20,7 +20,11 @@ func TestConfig(t *testing.T) {
 			config: New(),
 			check: func(t *testing.T, cfg *Config) {
 				assert.Equal(t, "localhost:8080", cfg.HTTPAddress)
-				assert.Equal(t, "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable", cfg.DatabaseURI)
+				assert.Equal(
+					t,
+					"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
+					cfg.DatabaseURI,
+				)
 				assert.Equal(t, "http://localhost:8081", cfg.AccrualSystemAddress)
 			},
 		},
@@ -47,14 +51,20 @@ func TestConfig(t *testing.T) {
 		{
 			name: "env_parsing",
 			setup: func() {
-				os.Setenv("RUN_ADDRESS", "localhost:9091")
-				os.Setenv("DATABASE_URI", "postgres://envuser:envpass@localhost:5432/envdb")
-				os.Setenv("ACCRUAL_SYSTEM_ADDRESS", "http://envaccrual:8083")
+				err := os.Setenv("RUN_ADDRESS", "localhost:9091")
+				assert.NoError(t, err)
+				err = os.Setenv("DATABASE_URI", "postgres://envuser:envpass@localhost:5432/envdb")
+				assert.NoError(t, err)
+				err = os.Setenv("ACCRUAL_SYSTEM_ADDRESS", "http://envaccrual:8083")
+				assert.NoError(t, err)
 			},
 			teardown: func() {
-				os.Unsetenv("RUN_ADDRESS")
-				os.Unsetenv("DATABASE_URI")
-				os.Unsetenv("ACCRUAL_SYSTEM_ADDRESS")
+				err := os.Unsetenv("RUN_ADDRESS")
+				assert.NoError(t, err)
+				err = os.Unsetenv("DATABASE_URI")
+				assert.NoError(t, err)
+				err = os.Unsetenv("ACCRUAL_SYSTEM_ADDRESS")
+				assert.NoError(t, err)
 			},
 			config: New(),
 			check: func(t *testing.T, cfg *Config) {

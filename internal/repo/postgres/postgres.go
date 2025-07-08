@@ -38,13 +38,12 @@ func NewPostgresRepo(ctx context.Context, dsn string) (repo.Repositories, error)
 		defer cancel()
 
 		if err := db.PingContext(ctxPing); err != nil {
-			db.Close() // закрываем соединение при ошибке
+			_ = db.Close() // закрываем соединение при ошибке
 			return err
 		}
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -59,9 +58,8 @@ func (r *postgresRepo) Migrate(ctx context.Context) error {
 		return migrator.Migrate(ctxMigrate, r.db)
 	})
 	if err != nil {
-		r.db.Close()
+		_ = r.db.Close()
 		return fmt.Errorf("migration failed: %w", err)
 	}
 	return nil
-
 }

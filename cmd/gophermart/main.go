@@ -26,5 +26,4 @@ func main() {
 		log.Println(err)
 		os.Exit(1)
 	}
-
 }

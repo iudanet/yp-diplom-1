@@ -25,13 +25,18 @@ func New() *Config {
 }
 
 func (c *Config) FlagParse() {
-
 	flag.StringVar(&c.HTTPAddress, "a", c.HTTPAddress, "http address| env RUN_ADDRESS ")
 	flag.StringVar(&c.DatabaseURI, "d", c.DatabaseURI, "database uri | env DATABASE_URI ")
-	flag.StringVar(&c.AccrualSystemAddress, "r", c.AccrualSystemAddress, "accrual system address | env ACCRUAL_SYSTEM_ADDRESS ")
+	flag.StringVar(
+		&c.AccrualSystemAddress,
+		"r",
+		c.AccrualSystemAddress,
+		"accrual system address | env ACCRUAL_SYSTEM_ADDRESS ",
+	)
 
 	flag.Parse()
 }
+
 func (c *Config) EnvParse() {
 	if os.Getenv("RUN_ADDRESS") != "" {
 		c.HTTPAddress = os.Getenv("RUN_ADDRESS")
@@ -41,10 +46,14 @@ func (c *Config) EnvParse() {
 	}
 	if os.Getenv("ACCRUAL_SYSTEM_ADDRESS") != "" {
 		c.AccrualSystemAddress = os.Getenv("ACCRUAL_SYSTEM_ADDRESS")
-
 	}
 }
 
 func (c *Config) String() string {
-	return fmt.Sprintf("Config:\n HTTPAddress: %s \n DatabaseURI: %s\n AccrualSystemAddress: %s\n", c.HTTPAddress, c.DatabaseURI, c.AccrualSystemAddress)
+	return fmt.Sprintf(
+		"Config:\n HTTPAddress: %s \n DatabaseURI: %s\n AccrualSystemAddress: %s\n",
+		c.HTTPAddress,
+		c.DatabaseURI,
+		c.AccrualSystemAddress,
+	)
 }
