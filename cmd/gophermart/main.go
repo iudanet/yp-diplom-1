@@ -35,14 +35,14 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	svc := service.NewService(repo)
+	svc := service.New(repo)
 	h := handlers.New(svc)
 	mux := h.NewMux()
 	srv := &http.Server{
 		Addr:    cfg.HTTPAddress,
 		Handler: mux,
 	}
-
+	// Run server
 	go func() {
 		log.Println("Running server to", cfg.HTTPAddress)
 		err := srv.ListenAndServe()
@@ -51,6 +51,7 @@ func main() {
 		}
 	}()
 
+	// Graceful shutdown
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	sig := <-sigCh

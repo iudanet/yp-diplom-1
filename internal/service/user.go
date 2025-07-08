@@ -2,7 +2,7 @@ package service
 
 import "github.com/iudanet/yp-diplom-1/internal/repo"
 
-func NewService(repo repo.Repositories) Service {
+func New(repo repo.Repositories) Service {
 	return &service{
 		repo: repo,
 	}
