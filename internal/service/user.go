@@ -59,3 +59,10 @@ func (s *service) Register(ctx context.Context, login, password string) error {
 
 	return s.repo.CreateUser(ctx, login, string(passwordHash))
 }
+
+func (s *service) GetUserBalance(
+	ctx context.Context,
+	userID int64,
+) (current, withdrawn float64, err error) {
+	return s.repo.GetUserBalance(ctx, userID)
+}

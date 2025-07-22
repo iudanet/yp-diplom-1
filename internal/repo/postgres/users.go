@@ -40,3 +40,31 @@ func (r *postgresRepo) GetUserByID(ctx context.Context, id int64) (*models.UserA
 	}
 	return &user, nil
 }
+
+func (r *postgresRepo) GetUserBalance(
+	ctx context.Context,
+	userID int64,
+) (current, withdrawn float64, err error) {
+	// Получаем текущий баланс (сумма всех начислений)
+	err = r.db.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(accrual), 0)
+         FROM orders
+         WHERE user_id = $1 AND status = $2`,
+		userID, models.OrderUserStatusProcessed,
+	).Scan(&current)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	err = r.db.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(sum), 0)
+	     FROM withdrawals
+	     WHERE user_id = $1`,
+		userID,
+	).Scan(&withdrawn)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return current, withdrawn, nil
+}

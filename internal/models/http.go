@@ -21,5 +21,5 @@ type BalanceWithdrawRequest struct {
 // GET /api/user/balance HTTP/1.1
 type BalanceResponse struct {
 	Current   float64 `json:"current"`
-	Withdrawn int64   `json:"withdrawn"`
+	Withdrawn float64 `json:"withdrawn"`
 }
