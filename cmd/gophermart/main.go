@@ -36,6 +36,13 @@ func main() {
 		}
 	}
 	svc := service.New(repo)
+	// Создаем клиент для accrual системы
+	accrualClient := service.NewAccrualClient(cfg.AccrualSystemAddress)
+
+	// Запускаем воркер для обработки заказов
+	worker := service.NewWorker(repo, accrualClient)
+	go worker.Run(ctx)
+
 	h := handlers.New(svc, cfg)
 	mux := h.NewMux()
 	srv := &http.Server{

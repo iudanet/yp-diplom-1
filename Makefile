@@ -2,6 +2,9 @@ test:: lint pg_up go_test  pg_down
 
 run:: lint pg_up go_run
 
+run_accrual::
+	    ./cmd/accrual/accrual_linux_amd64 -a :8081 -d "postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable"
+
 lint:: statictest golangci-fmt  golangci
 
 go_test:: go_tidy statictest

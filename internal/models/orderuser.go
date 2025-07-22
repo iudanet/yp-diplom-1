@@ -19,6 +19,6 @@ const (
 type OrderUser struct {
 	Number     string          `json:"number"`
 	Status     OrderUserStatus `json:"status"`
-	Accrual    *int            `json:"accrual,omitempty"`
+	Accrual    *float64        `json:"accrual,omitempty"`
 	UploadedAt time.Time       `json:"uploaded_at"`
 }
