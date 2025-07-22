@@ -19,14 +19,6 @@ type service struct {
 	repo repo.Repositories
 }
 
-func (s *service) CreateOrders() error {
-	return nil
-}
-
-func (s *service) GetOrders() error {
-	return nil
-}
-
 func (s *service) GetBalance() error {
 	return nil
 }

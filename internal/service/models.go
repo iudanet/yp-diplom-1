@@ -17,6 +17,7 @@ import (
 
 type Service interface {
 	AuthService
+	OrderService
 	UserService
 }
 
@@ -25,9 +26,11 @@ type AuthService interface {
 	Register(ctx context.Context, login, password string) error
 }
 
+type OrderService interface {
+	CreateOrder(ctx context.Context, userID int64, number string) error
+	GetOrders(ctx context.Context, userID int64) ([]models.OrderUser, error)
+}
 type UserService interface {
-	CreateOrders() error
-	GetOrders() error
 	GetBalance() error
 	GetBalanceWithdrawals() error
 	CreateWithdraw() error

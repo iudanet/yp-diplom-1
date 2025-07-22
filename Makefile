@@ -52,9 +52,9 @@ test_ci:: pg_up build
 	  -accrual-port=$(shell random unused-port) \
 	  -accrual-database-uri="postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable"
 
-test_ci_auth:: pg_up build
+test_ci_one:: pg_up build
 	gophermarttest \
-	  -test.v -test.run=^TestGophermart/TestEndToEnd/register_user$ \
+	  -test.v -test.run=^TestGophermart/TestUserOrders/order_upload$ \
 	  -gophermart-binary-path=cmd/gophermart/gophermart \
 	  -gophermart-host=localhost \
 	  -gophermart-port=8080 \
