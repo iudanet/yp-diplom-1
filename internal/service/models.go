@@ -1,5 +1,11 @@
 package service
 
+import (
+	"context"
+
+	"github.com/iudanet/yp-diplom-1/internal/models"
+)
+
 //
 // * `POST /api/user/register` — регистрация пользователя;
 // * `POST /api/user/login` — аутентификация пользователя;
@@ -15,8 +21,8 @@ type Service interface {
 }
 
 type AuthService interface {
-	Login() error
-	Register() error
+	Login(ctx context.Context, login, password string) (*models.UserAuth, error)
+	Register(ctx context.Context, login, password string) error
 }
 
 type UserService interface {

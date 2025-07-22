@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/iudanet/yp-diplom-1/internal/models"
 	"github.com/iudanet/yp-diplom-1/internal/repo"
 	"github.com/iudanet/yp-diplom-1/internal/repo/migrator"
 	"github.com/iudanet/yp-diplom-1/internal/retry"
@@ -62,4 +63,21 @@ func (r *postgresRepo) Migrate(ctx context.Context) error {
 		return fmt.Errorf("migration failed: %w", err)
 	}
 	return nil
+}
+
+func (r *postgresRepo) CreateUser(ctx context.Context, login, passwordHash string) error {
+	_, err := r.db.ExecContext(
+		ctx,
+		"INSERT INTO users_auth (login, password_hash) VALUES ($1, $2)",
+		login,
+		passwordHash,
+	)
+	return err
+}
+
+func (r *postgresRepo) GetUserByLogin(ctx context.Context, login string) (*models.UserAuth, error) {
+	var user models.UserAuth
+	err := r.db.QueryRowContext(ctx, "SELECT id, login, password_hash FROM users_auth WHERE login = $1", login).
+		Scan(&user.ID, &user.Login, &user.PasswordHash)
+	return &user, err
 }

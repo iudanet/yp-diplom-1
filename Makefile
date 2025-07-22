@@ -36,3 +36,30 @@ prepare::
 
 migration_create:: prepare
 	goose -dir internal/repo/migrator/migrations create migration sql
+
+build::
+	go build -o cmd/gophermart/gophermart cmd/gophermart/main.go
+
+test_ci:: pg_up build
+	gophermarttest \
+	  -test.v -test.run=^TestGophermart$ \
+	  -gophermart-binary-path=cmd/gophermart/gophermart \
+	  -gophermart-host=localhost \
+	  -gophermart-port=8080 \
+	  -gophermart-database-uri="postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable" \
+	  -accrual-binary-path=cmd/accrual/accrual_linux_amd64 \
+	  -accrual-host=localhost \
+	  -accrual-port=$(shell random unused-port) \
+	  -accrual-database-uri="postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable"
+
+test_ci_auth:: pg_up build
+	gophermarttest \
+	  -test.v -test.run=^TestGophermart/TestEndToEnd/register_user$ \
+	  -gophermart-binary-path=cmd/gophermart/gophermart \
+	  -gophermart-host=localhost \
+	  -gophermart-port=8080 \
+	  -gophermart-database-uri="postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable" \
+	  -accrual-binary-path=cmd/accrual/accrual_linux_amd64 \
+	  -accrual-host=localhost \
+	  -accrual-port=$(shell random unused-port) \
+	  -accrual-database-uri="postgresql://gofermart:yandex@127.0.0.1/gofermart_db?sslmode=disable"

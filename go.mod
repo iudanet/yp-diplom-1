@@ -3,10 +3,12 @@ module github.com/iudanet/yp-diplom-1
 go 1.24.1
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/crypto v0.38.0
 )
 
 require (

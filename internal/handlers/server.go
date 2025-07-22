@@ -3,15 +3,17 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/iudanet/yp-diplom-1/internal/config"
 	"github.com/iudanet/yp-diplom-1/internal/service"
 )
 
 type Server struct {
 	svc service.Service
+	cfg *config.Config
 }
 
-func New(svc service.Service) *Server {
-	return &Server{svc: svc}
+func New(svc service.Service, cfg *config.Config) *Server {
+	return &Server{svc: svc, cfg: cfg}
 }
 
 func (s *Server) NewMux() *http.ServeMux {

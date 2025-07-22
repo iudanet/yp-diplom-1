@@ -15,6 +15,7 @@ type Config struct {
 	DatabaseURI          string
 	AccrualSystemAddress string
 	Migrate              bool
+	SecretKey            string
 }
 
 func New() *Config {
@@ -23,6 +24,7 @@ func New() *Config {
 		DatabaseURI:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
 		AccrualSystemAddress: "http://localhost:8081",
 		Migrate:              true,
+		SecretKey:            "ohy2uNgeepah1uoxov3Aiphei1eo0nahquiepa4y",
 	}
 }
 
@@ -57,6 +59,9 @@ func (c *Config) EnvParse() {
 	}
 	if os.Getenv("MIGRATE") != "" {
 		c.Migrate = os.Getenv("MIGRATE") == "true"
+	}
+	if os.Getenv("SECRET_KEY") != "" {
+		c.SecretKey = os.Getenv("SECRET_KEY")
 	}
 }
 

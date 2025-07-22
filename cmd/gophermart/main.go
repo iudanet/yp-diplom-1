@@ -36,7 +36,7 @@ func main() {
 		}
 	}
 	svc := service.New(repo)
-	h := handlers.New(svc)
+	h := handlers.New(svc, cfg)
 	mux := h.NewMux()
 	srv := &http.Server{
 		Addr:    cfg.HTTPAddress,
