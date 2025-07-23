@@ -50,7 +50,7 @@ func TestWorkerProcessOrder(t *testing.T) {
 			accrualResult: &models.OrderAccrualResponse{
 				Order:   "456",
 				Status:  models.OrderAccrualStatusProcessed,
-				Accrual: ptrFloat64(100.5),
+				Accrual: 100.5,
 			},
 			mockSetup: func(repoMock *mock_repo.MockRepositories, accrualMock *mock_service.MockAccrualClientInterface) {
 				repoMock.EXPECT().UpdateOrderAccrual(
@@ -64,7 +64,7 @@ func TestWorkerProcessOrder(t *testing.T) {
 					Return(&models.OrderAccrualResponse{
 						Order:   "456",
 						Status:  models.OrderAccrualStatusProcessed,
-						Accrual: ptrFloat64(100.5),
+						Accrual: 100.5,
 					}, nil)
 			},
 			wantErr: false,

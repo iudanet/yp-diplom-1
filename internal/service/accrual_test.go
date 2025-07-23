@@ -29,7 +29,7 @@ func TestAccrualClient_GetOrderAccrual(t *testing.T) {
 			expectedResult: &models.OrderAccrualResponse{
 				Order:   "123",
 				Status:  "PROCESSED",
-				Accrual: ptrFloat64(100.5),
+				Accrual: 100.5,
 			},
 			expectError: false,
 		},
@@ -73,8 +73,4 @@ func TestAccrualClient_GetOrderAccrual(t *testing.T) {
 			assert.Equal(t, tt.expectedResult, result)
 		})
 	}
-}
-
-func ptrFloat64(f float64) *float64 {
-	return &f
 }

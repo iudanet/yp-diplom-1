@@ -102,16 +102,16 @@ func (w *Worker) processOrder(ctx context.Context, order models.OrderUser) error
 
 	switch accrualInfo.Status {
 	case models.OrderAccrualStatusProcessed:
-		if accrualInfo.Accrual == nil {
+		if accrualInfo.Accrual == 0 {
 			w.logger.Printf("No accrual for processed order %s", order.Number)
 			return nil
 		}
 		// Конвертируем рубли в копейки перед сохранением
-		accrualCents := int64(*accrualInfo.Accrual * 100)
+		accrualCents := int64(accrualInfo.Accrual * 100)
 		w.logger.Printf(
 			"Updating order %s status to PROCESSED with accrual %v (копеек: %d)",
 			order.Number,
-			*accrualInfo.Accrual,
+			accrualInfo.Accrual,
 			accrualCents,
 		)
 		if err := w.repo.UpdateOrderAccrual(ctx, order.Number, models.OrderUserStatusProcessed, accrualCents); err != nil {
