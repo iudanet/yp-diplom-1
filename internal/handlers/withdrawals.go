@@ -9,11 +9,7 @@ import (
 )
 
 func (s *Server) Withdrawals(w http.ResponseWriter, r *http.Request) {
-	userID, err := s.checkAuth(r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	userID := r.Context().Value(userIDKey).(int64)
 
 	withdrawals, err := s.svc.GetWithdrawals(r.Context(), userID)
 	if err != nil {

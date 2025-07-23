@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -189,7 +190,8 @@ func TestServer_PostOrders(t *testing.T) {
 				bytes.NewReader([]byte(tt.orderNumber)),
 			)
 			req.Header.Set("Content-Type", "text/plain")
-			req.Header.Set("Authorization", "Bearer "+generateTestToken(t, 1, cfg.SecretKey))
+			ctx := context.WithValue(context.Background(), userIDKey, int64(1))
+			req = req.WithContext(ctx)
 
 			w := httptest.NewRecorder()
 

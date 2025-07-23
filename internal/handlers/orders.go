@@ -37,12 +37,8 @@ func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверяем авторизацию пользователя
-	userID, err := s.checkAuth(r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	// Получаем userID из контекста
+	userID := r.Context().Value(userIDKey).(int64)
 
 	err = s.svc.CreateOrder(r.Context(), userID, number)
 	switch {
@@ -61,11 +57,7 @@ func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) GetOrders(w http.ResponseWriter, r *http.Request) {
-	userID, err := s.checkAuth(r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	userID := r.Context().Value(userIDKey).(int64)
 
 	orders, err := s.svc.GetOrders(r.Context(), userID)
 	if err != nil {

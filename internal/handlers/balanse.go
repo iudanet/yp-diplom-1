@@ -10,11 +10,7 @@ import (
 )
 
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
-	userID, err := s.checkAuth(r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	userID := r.Context().Value(userIDKey).(int64)
 
 	currentRub, withdrawnRub, err := s.svc.GetUserBalance(r.Context(), userID)
 	if err != nil {
@@ -34,11 +30,8 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
-	userID, err := s.checkAuth(r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	// Получаем userID из контекста
+	userID := r.Context().Value(userIDKey).(int64)
 
 	var req models.BalanceWithdrawRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -62,7 +55,7 @@ func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 	// Конвертируем рубли в копейки
 	sumCents := int64(req.Sum * 100)
 
-	err = s.svc.CreateWithdrawal(r.Context(), userID, req.Order, sumCents)
+	err := s.svc.CreateWithdrawal(r.Context(), userID, req.Order, sumCents)
 	switch {
 	case errors.Is(err, models.ErrInsufficientFunds):
 		http.Error(w, "Insufficient funds", http.StatusPaymentRequired)
