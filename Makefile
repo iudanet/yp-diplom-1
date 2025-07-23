@@ -1,4 +1,4 @@
-test:: lint pg_up go_test  pg_down
+test:: mock_gen lint pg_up go_test  test_ci pg_down
 
 run:: lint pg_up go_run
 
@@ -16,6 +16,10 @@ go_run::
 
 statictest::
 	go vet -vettool=$(shell which statictest) ./...
+
+mock_gen::
+	mockgen -source=internal/service/models.go -destination=internal/service/mock_service/mock_service.go -package=mock_service
+	mockgen -source=internal/repo/repo.go -destination=internal/repo/mock_repo/mock_repo.go -package=mock_repo
 
 golangci::
 	golangci-lint run ./...
