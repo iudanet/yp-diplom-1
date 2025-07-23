@@ -10,6 +10,19 @@ import (
 	"github.com/iudanet/yp-diplom-1/internal/pkg/auth"
 )
 
+// Register godoc
+//
+//	@Summary		Register a new user
+//	@Description	Register a new user with login and password
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.RegisterRequest	true	"Register request"
+//	@Success		200		{string}	string					"Successfully registered"
+//	@Failure		400		{string}	string					"Invalid request format"
+//	@Failure		409		{string}	string					"Login already exists"
+//	@Failure		500		{string}	string					"Internal server error"
+//	@Router			/api/user/register [post]
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	var req models.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -52,6 +65,19 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Login godoc
+//
+//	@Summary		Login user
+//	@Description	Authenticate user with login and password
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.LoginRequest	true	"Login request"
+//	@Success		200		{string}	string				"Successfully logged in"
+//	@Failure		400		{string}	string				"Invalid request format"
+//	@Failure		401		{string}	string				"Invalid credentials"
+//	@Failure		500		{string}	string				"Internal server error"
+//	@Router			/api/user/login [post]
 func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	var req models.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

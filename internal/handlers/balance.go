@@ -10,6 +10,18 @@ import (
 	"github.com/iudanet/yp-diplom-1/internal/pkg/luhn"
 )
 
+// Balance godoc
+//
+//	@Summary		Get user balance
+//	@Description	Get current user balance and withdrawn amount
+//	@Tags			balance
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	models.BalanceResponse	"User balance information"
+//	@Failure		401	{string}	string					"Unauthorized"
+//	@Failure		500	{string}	string					"Internal server error"
+//	@Router			/api/user/balance [get]
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(userIDKey).(int64)
 
@@ -30,6 +42,22 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// BalanceWithdraw godoc
+//
+//	@Summary		Withdraw from balance
+//	@Description	Withdraw funds from user's balance
+//	@Tags			balance
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		models.BalanceWithdrawRequest	true	"Withdraw request"
+//	@Success		200		{string}	string							"Successfully withdrawn"
+//	@Failure		400		{string}	string							"Invalid request format"
+//	@Failure		401		{string}	string							"Unauthorized"
+//	@Failure		402		{string}	string							"Insufficient funds"
+//	@Failure		422		{string}	string							"Invalid order number format"
+//	@Failure		500		{string}	string							"Internal server error"
+//	@Router			/api/user/balance/withdraw [post]
 func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 	// Получаем userID из контекста
 	userID := r.Context().Value(userIDKey).(int64)

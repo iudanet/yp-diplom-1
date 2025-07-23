@@ -8,6 +8,19 @@ import (
 	"github.com/iudanet/yp-diplom-1/internal/models"
 )
 
+// Withdrawals godoc
+//
+//	@Summary		Get user's withdrawals
+//	@Description	Get list of withdrawals made by user
+//	@Tags			balance
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{array}		models.WithdrawalResponse	"List of user's withdrawals"
+//	@Success		204	{string}	string						"No withdrawals found"
+//	@Failure		401	{string}	string						"Unauthorized"
+//	@Failure		500	{string}	string						"Internal server error"
+//	@Router			/api/user/withdrawals [get]
 func (s *Server) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(userIDKey).(int64)
 

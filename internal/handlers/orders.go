@@ -11,6 +11,23 @@ import (
 	"github.com/iudanet/yp-diplom-1/internal/pkg/luhn"
 )
 
+// PostOrders godoc
+//
+//	@Summary		Upload order number
+//	@Description	Upload order number for accrual calculation
+//	@Tags			orders
+//	@Accept			text/plain
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			order	body		string	true	"Order number"
+//	@Success		200		{string}	string	"Order already uploaded"
+//	@Success		202		{string}	string	"Order accepted for processing"
+//	@Failure		400		{string}	string	"Invalid request format"
+//	@Failure		401		{string}	string	"Unauthorized"
+//	@Failure		409		{string}	string	"Order already uploaded by another user"
+//	@Failure		422		{string}	string	"Invalid order number format"
+//	@Failure		500		{string}	string	"Internal server error"
+//	@Router			/api/user/orders [post]
 func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 	// Проверяем Content-Type
 	if r.Header.Get("Content-Type") != "text/plain" {
@@ -57,6 +74,19 @@ func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetOrders godoc
+//
+//	@Summary		Get user's orders
+//	@Description	Get list of orders uploaded by user
+//	@Tags			orders
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{array}		models.OrderUser	"List of user's orders"
+//	@Success		204	{string}	string				"No orders found"
+//	@Failure		401	{string}	string				"Unauthorized"
+//	@Failure		500	{string}	string				"Internal server error"
+//	@Router			/api/user/orders [get]
 func (s *Server) GetOrders(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(userIDKey).(int64)
 

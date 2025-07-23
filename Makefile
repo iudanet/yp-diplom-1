@@ -1,4 +1,4 @@
-test:: mock_gen lint pg_up go_test  test_ci pg_down
+test:: swag_gen mock_gen lint pg_up go_test  test_ci pg_down
 
 run:: lint pg_up go_run
 
@@ -22,6 +22,9 @@ mock_gen::
 	mockgen -source=internal/repo/repo.go -destination=internal/repo/mock_repo/mock_repo.go -package=mock_repo
 	mockgen -source=internal/service/accrual.go -destination=internal/service/mock_service/accrual_client_mock.go -package=mock_service
 
+swag_gen::
+	swag init -g internal/handlers/swagger.go -o internal/docs
+
 golangci::
 	golangci-lint run ./...
 
@@ -41,6 +44,7 @@ go_tidy::
 prepare::
 	go install github.com/pressly/goose/v3/cmd/goose@latest
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.2.1
+	go install github.com/swaggo/swag/cmd/swag@latest
 
 migration_create:: prepare
 	goose -dir internal/repo/migrator/migrations create migration sql

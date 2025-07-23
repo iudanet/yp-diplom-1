@@ -49,7 +49,7 @@ func (w *Worker) Run(ctx context.Context) {
 
 func (w *Worker) processBatch(ctx context.Context) error {
 	startTime := time.Now()
-	w.logger.Println("Processing new batch of orders")
+	// w.logger.Println("Processing new batch of orders")
 
 	orders, err := w.repo.GetOrdersForProcessing(ctx, w.batchSize)
 	if err != nil {
@@ -57,7 +57,7 @@ func (w *Worker) processBatch(ctx context.Context) error {
 	}
 
 	if len(orders) == 0 {
-		w.logger.Println("No orders to process")
+		// w.logger.Println("No orders to process")
 		return nil
 	}
 

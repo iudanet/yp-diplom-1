@@ -18,6 +18,7 @@ func New(svc service.Service, cfg *config.Config) *Server {
 
 func (s *Server) NewMux() *http.ServeMux {
 	mux := http.NewServeMux()
+	s.setupSwagger(mux)
 	mux.HandleFunc("POST /api/user/register", s.Register)
 	mux.HandleFunc("POST /api/user/login", s.Login)
 
