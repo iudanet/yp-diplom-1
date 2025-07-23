@@ -8,7 +8,7 @@ run_accrual::
 lint:: statictest golangci-fmt  golangci
 
 go_test:: go_tidy statictest
-	go test ./...
+	go test -v -race ./...
 
 go_run::
 	go run cmd/gophermart/main.go \
