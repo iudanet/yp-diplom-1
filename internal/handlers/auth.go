@@ -7,8 +7,6 @@ import (
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
@@ -25,8 +23,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 
 	err := s.svc.Register(r.Context(), req.Login, req.Password)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == pgerrcode.UniqueViolation {
+		if errors.Is(err, models.ErrUserAlreadyExists) {
 			w.WriteHeader(http.StatusConflict)
 			return
 		}

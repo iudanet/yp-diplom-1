@@ -8,6 +8,8 @@ import (
 	"log"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 )
 
 func (r *postgresRepo) CreateUser(ctx context.Context, login, passwordHash string) error {
@@ -17,7 +19,14 @@ func (r *postgresRepo) CreateUser(ctx context.Context, login, passwordHash strin
 		login,
 		passwordHash,
 	)
-	return err
+	if err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == pgerrcode.UniqueViolation {
+			return models.ErrUserAlreadyExists
+		}
+		return err
+	}
+	return nil
 }
 
 func (r *postgresRepo) GetUserByLogin(ctx context.Context, login string) (*models.UserAuth, error) {

@@ -12,8 +12,6 @@ import (
 	"github.com/iudanet/yp-diplom-1/internal/config"
 	"github.com/iudanet/yp-diplom-1/internal/models"
 	"github.com/iudanet/yp-diplom-1/internal/service/mock_service"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
 )
@@ -56,8 +54,7 @@ func TestServer_Register(t *testing.T) {
 			},
 			mockSetup: func(mock *mock_service.MockService) {
 				mock.EXPECT().Register(gomock.Any(), "existing", "testpass").
-					Return(&pq.Error{Code: pgerrcode.UniqueViolation})
-				// Имитируем ошибку PostgreSQL
+					Return(models.ErrUserAlreadyExists)
 			},
 			expectedStatus: http.StatusConflict,
 		},
