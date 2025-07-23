@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/iudanet/yp-diplom-1/internal/pkg/retry"
 	"github.com/iudanet/yp-diplom-1/internal/repo"
 	"github.com/iudanet/yp-diplom-1/internal/repo/migrator"
-	"github.com/iudanet/yp-diplom-1/internal/retry"
 	_ "github.com/lib/pq"
 )
 

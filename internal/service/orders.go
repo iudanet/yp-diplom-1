@@ -7,10 +7,11 @@ import (
 	"fmt"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/luhn"
 )
 
 func (s *service) CreateOrder(ctx context.Context, userID int64, number string) error {
-	if !isValidLuhn(number) {
+	if !luhn.IsValid(number) {
 		return models.ErrInvalidOrderNumber
 	}
 
@@ -36,23 +37,4 @@ func (s *service) CreateOrder(ctx context.Context, userID int64, number string) 
 
 func (s *service) GetOrders(ctx context.Context, userID int64) ([]models.OrderUser, error) {
 	return s.repo.GetOrdersByUserID(ctx, userID)
-}
-
-// isValidLuhn проверяет номер заказа по алгоритму Луна
-func isValidLuhn(number string) bool {
-	sum := 0
-	nDigits := len(number)
-	parity := nDigits % 2
-
-	for i := 0; i < nDigits; i++ {
-		digit := int(number[i] - '0')
-		if i%2 == parity {
-			digit *= 2
-			if digit > 9 {
-				digit -= 9
-			}
-		}
-		sum += digit
-	}
-	return sum%10 == 0
 }

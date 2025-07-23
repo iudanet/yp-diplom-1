@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/luhn"
 )
 
 func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +33,7 @@ func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверяем номер заказа по алгоритму Луна
-	if !isValidLuhn(number) {
+	if !luhn.IsValid(number) {
 		http.Error(w, "Invalid order number", http.StatusUnprocessableEntity)
 		return
 	}
@@ -72,6 +73,7 @@ func (s *Server) GetOrders(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(orders); err != nil {
+		log.Printf("Encode error: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }

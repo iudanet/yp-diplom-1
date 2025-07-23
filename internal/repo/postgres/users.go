@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
 	"github.com/jackc/pgerrcode"
@@ -95,7 +94,6 @@ func (r *postgresRepo) CreateWithdrawal(
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer tx.Rollback()
-	log.Println("CreateWithdrawal: ", userID, orderNumber, sumCents)
 	var accrued int64
 	err = tx.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(accrual), 0)

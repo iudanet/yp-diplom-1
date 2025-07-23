@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/luhn"
 )
 
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +48,7 @@ func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isValidLuhn(req.Order) {
+	if !luhn.IsValid(req.Order) {
 		http.Error(w, "Invalid order number", http.StatusUnprocessableEntity)
 		return
 	}

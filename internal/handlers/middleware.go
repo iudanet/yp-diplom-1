@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/auth"
 )
 
 const (
@@ -28,35 +29,27 @@ func (s *Server) authMiddleware(next http.Handler) http.Handler {
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
-			}
-			return []byte(s.cfg.SecretKey), nil
-		})
+		token, err := jwt.ParseWithClaims(
+			tokenString,
+			&auth.Claims{},
+			func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, jwt.ErrSignatureInvalid
+				}
+				return []byte(s.cfg.SecretKey), nil
+			},
+		)
 
 		if err != nil || !token.Valid {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
+		if claims, ok := token.Claims.(*auth.Claims); ok {
+			ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		} else {
+			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 		}
-
-		userID, ok := claims["user_id"].(float64)
-		if !ok || userID == 0 {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-
-		// Добавляем userID в контекст запроса
-		ctx := r.Context()
-		ctx = context.WithValue(ctx, userIDKey, int64(userID))
-		r = r.WithContext(ctx)
-
-		next.ServeHTTP(w, r)
 	})
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/auth"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := generateToken(user.ID, s.cfg.SecretKey)
+	token, err := auth.GenerateToken(user.ID, s.cfg.SecretKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -64,7 +65,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := generateToken(user.ID, s.cfg.SecretKey)
+	token, err := auth.GenerateToken(user.ID, s.cfg.SecretKey)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

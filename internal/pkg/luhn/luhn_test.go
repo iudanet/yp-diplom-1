@@ -1,4 +1,4 @@
-package handlers
+package luhn
 
 import (
 	"testing"
@@ -41,7 +41,7 @@ func TestIsValidLuhn(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.isValid, isValidLuhn(tt.number))
+			assert.Equal(t, tt.isValid, IsValid(tt.number))
 		})
 	}
 }

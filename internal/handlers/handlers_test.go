@@ -12,6 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/iudanet/yp-diplom-1/internal/config"
 	"github.com/iudanet/yp-diplom-1/internal/models"
+	"github.com/iudanet/yp-diplom-1/internal/pkg/auth"
 	"github.com/iudanet/yp-diplom-1/internal/service/mock_service"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/v3/assert"
@@ -206,7 +207,7 @@ func TestServer_PostOrders(t *testing.T) {
 }
 
 func generateTestToken(t *testing.T, userID int64, secretKey string) string {
-	token, err := generateToken(userID, secretKey)
+	token, err := auth.GenerateToken(userID, secretKey)
 	require.NoError(t, err)
 	return token
 }
