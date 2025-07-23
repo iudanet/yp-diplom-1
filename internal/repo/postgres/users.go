@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
 )
@@ -46,16 +47,19 @@ func (r *postgresRepo) GetUserBalance(
 	ctx context.Context,
 	userID int64,
 ) (current, withdrawn int64, err error) {
+	// Получаем сумму всех начислений в копейках (целое число)
+	var accrued int64
 	err = r.db.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(accrual), 0)
          FROM orders
          WHERE user_id = $1 AND status = $2`,
 		userID, models.OrderUserStatusProcessed,
-	).Scan(&current)
+	).Scan(&accrued)
 	if err != nil {
 		return 0, 0, err
 	}
 
+	// Получаем сумму всех списаний в копейках (целое число)
 	err = r.db.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(sum), 0)
          FROM withdrawals
@@ -66,6 +70,8 @@ func (r *postgresRepo) GetUserBalance(
 		return 0, 0, err
 	}
 
+	// Текущий баланс = начисления - списания (все в копейках)
+	current = accrued - withdrawn
 	return current, withdrawn, nil
 }
 
@@ -80,7 +86,7 @@ func (r *postgresRepo) CreateWithdrawal(
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer tx.Rollback()
-
+	log.Println("CreateWithdrawal: ", userID, orderNumber, sumCents)
 	var accrued int64
 	err = tx.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(accrual), 0)

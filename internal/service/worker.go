@@ -23,7 +23,7 @@ func NewWorker(repo repo.Repositories, accrualClient *AccrualClient) *Worker {
 		repo:          repo,
 		accrualClient: accrualClient,
 		batchSize:     10,
-		pollInterval:  1 * time.Second,
+		pollInterval:  500 * time.Millisecond,
 		logger:        log.New(log.Writer(), "worker: ", log.LstdFlags),
 	}
 }

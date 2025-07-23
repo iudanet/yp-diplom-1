@@ -30,7 +30,6 @@ func (r *postgresRepo) GetOrderByNumber(
          FROM orders WHERE number = $1`,
 		number,
 	).Scan(&order.Number, &order.Status, &accrualCents, &order.UploadedAt)
-
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -45,6 +44,7 @@ func (r *postgresRepo) GetOrderByNumber(
 
 	return &order, nil
 }
+
 func (r *postgresRepo) GetOrdersByUserID(
 	ctx context.Context,
 	userID int64,
