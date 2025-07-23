@@ -4,45 +4,33 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
 )
 
 func (s *service) CreateOrder(ctx context.Context, userID int64, number string) error {
-	// Проверяем валидность номера заказа
 	if !isValidLuhn(number) {
 		return models.ErrInvalidOrderNumber
 	}
 
-	// Проверяем существование пользователя
-	_, err := s.repo.GetUserByID(ctx, userID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return models.ErrUserNotFound
-		}
-		return err
-	}
-
-	// Проверяем, существует ли уже такой заказ
 	existingOrder, err := s.repo.GetOrderByNumber(ctx, number)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return err
+		return fmt.Errorf("failed to check order: %w", err)
 	}
 
 	if existingOrder != nil {
-		// Если заказ уже существует, проверяем принадлежность пользователю
-		orderOwner, err := s.repo.GetOrderOwner(ctx, number)
+		ownerID, err := s.repo.GetOrderOwner(ctx, number)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get order owner: %w", err)
 		}
 
-		if orderOwner == userID {
+		if ownerID == userID {
 			return models.ErrOrderAlreadyUploaded
 		}
 		return models.ErrOrderAlreadyUploadedByAnotherUser
 	}
 
-	// Создаем новый заказ
 	return s.repo.CreateOrder(ctx, userID, number)
 }
 

@@ -44,13 +44,14 @@ func (s *Server) PostOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Создаем заказ
 	err = s.svc.CreateOrder(r.Context(), userID, number)
 	switch {
 	case errors.Is(err, models.ErrOrderAlreadyUploaded):
 		w.WriteHeader(http.StatusOK)
 	case errors.Is(err, models.ErrOrderAlreadyUploadedByAnotherUser):
 		http.Error(w, "Order already uploaded by another user", http.StatusConflict)
+	case errors.Is(err, models.ErrInvalidOrderNumber):
+		http.Error(w, "Invalid order number", http.StatusUnprocessableEntity)
 	case err != nil:
 		log.Printf("Error creating order: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

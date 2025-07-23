@@ -63,10 +63,20 @@ func (s *service) Register(ctx context.Context, login, password string) error {
 func (s *service) GetUserBalance(
 	ctx context.Context,
 	userID int64,
-) (current, withdrawn float64, err error) {
-	return s.repo.GetUserBalance(ctx, userID)
+) (current, withdrawn int64, err error) {
+	currentCents, withdrawnCents, err := s.repo.GetUserBalance(ctx, userID)
+	return int64(currentCents), int64(withdrawnCents), err
 }
 
-func (s *service) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
-	return s.repo.CreateWithdrawal(ctx, userID, orderNumber, sum)
+func (s *service) CreateWithdrawal(
+	ctx context.Context,
+	userID int64,
+	orderNumber string,
+	sumCents int64,
+) error {
+	return s.repo.CreateWithdrawal(ctx, userID, orderNumber, sumCents)
+}
+
+func (s *service) GetWithdrawals(ctx context.Context, userID int64) ([]models.WithdrawalDB, error) {
+	return s.repo.GetWithdrawals(ctx, userID)
 }

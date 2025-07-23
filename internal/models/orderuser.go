@@ -17,8 +17,9 @@ const (
 
 // GET /api/user/orders []OrderUser
 type OrderUser struct {
-	Number     string          `json:"number"`
-	Status     OrderUserStatus `json:"status"`
-	Accrual    *float64        `json:"accrual,omitempty"`
-	UploadedAt time.Time       `json:"uploaded_at"`
+	Number       string          `json:"number"`
+	Status       OrderUserStatus `json:"status"`
+	Accrual      float64         `json:"accrual,omitempty"`
+	AccrualCents int64           `json:"-"` // копейки (только для внутреннего использования)
+	UploadedAt   time.Time       `json:"uploaded_at"`
 }

@@ -79,7 +79,7 @@ func (r *postgresRepo) UpdateOrderAccrual(
 	ctx context.Context,
 	number string,
 	status models.OrderUserStatus,
-	accrual float64,
+	accrualCents int64,
 ) error {
 	result, err := r.db.ExecContext(
 		ctx,
@@ -87,7 +87,7 @@ func (r *postgresRepo) UpdateOrderAccrual(
         SET status = $1, accrual = $2, updated_at = $3
         WHERE number = $4`,
 		status,
-		accrual, // Теперь принимает float64
+		accrualCents,
 		time.Now(),
 		number,
 	)

@@ -45,8 +45,7 @@ func (r *postgresRepo) GetUserByID(ctx context.Context, id int64) (*models.UserA
 func (r *postgresRepo) GetUserBalance(
 	ctx context.Context,
 	userID int64,
-) (current, withdrawn float64, err error) {
-	// Получаем текущий баланс (сумма всех начислений)
+) (current, withdrawn int64, err error) {
 	err = r.db.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(accrual), 0)
          FROM orders
@@ -59,8 +58,8 @@ func (r *postgresRepo) GetUserBalance(
 
 	err = r.db.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(sum), 0)
-	     FROM withdrawals
-	     WHERE user_id = $1`,
+         FROM withdrawals
+         WHERE user_id = $1`,
 		userID,
 	).Scan(&withdrawn)
 	if err != nil {
@@ -70,15 +69,19 @@ func (r *postgresRepo) GetUserBalance(
 	return current, withdrawn, nil
 }
 
-func (r *postgresRepo) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+func (r *postgresRepo) CreateWithdrawal(
+	ctx context.Context,
+	userID int64,
+	orderNumber string,
+	sumCents int64,
+) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer tx.Rollback()
 
-	// Получаем сумму начислений
-	var accrued float64
+	var accrued int64
 	err = tx.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(accrual), 0)
          FROM orders
@@ -89,8 +92,7 @@ func (r *postgresRepo) CreateWithdrawal(ctx context.Context, userID int64, order
 		return fmt.Errorf("failed to get accrued sum: %w", err)
 	}
 
-	// Получаем сумму списаний
-	var withdrawn float64
+	var withdrawn int64
 	err = tx.QueryRowContext(ctx,
 		`SELECT COALESCE(SUM(sum), 0)
          FROM withdrawals
@@ -101,21 +103,51 @@ func (r *postgresRepo) CreateWithdrawal(ctx context.Context, userID int64, order
 		return fmt.Errorf("failed to get withdrawn sum: %w", err)
 	}
 
-	// Проверяем баланс
 	currentBalance := accrued - withdrawn
-	if currentBalance < sum {
+	if currentBalance < sumCents {
 		return models.ErrInsufficientFunds
 	}
 
-	// Создаем списание
 	_, err = tx.ExecContext(ctx,
 		`INSERT INTO withdrawals (user_id, order_number, sum)
          VALUES ($1, $2, $3)`,
-		userID, orderNumber, sum,
+		userID, orderNumber, sumCents,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create withdrawal: %w", err)
 	}
 
 	return tx.Commit()
+}
+
+func (r *postgresRepo) GetWithdrawals(
+	ctx context.Context,
+	userID int64,
+) ([]models.WithdrawalDB, error) {
+	rows, err := r.db.QueryContext(ctx,
+		`SELECT order_number, sum, processed_at
+         FROM withdrawals
+         WHERE user_id = $1
+         ORDER BY processed_at DESC`,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var withdrawals []models.WithdrawalDB
+	for rows.Next() {
+		var w models.WithdrawalDB
+		if err := rows.Scan(&w.Order, &w.Sum, &w.ProcessedAt); err != nil {
+			return nil, err
+		}
+		withdrawals = append(withdrawals, w)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return withdrawals, nil
 }

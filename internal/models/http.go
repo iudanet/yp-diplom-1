@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // POST /api/user/login HTTP/1.1
 type LoginRequest struct {
 	Login    string `json:"login"`
@@ -22,4 +24,9 @@ type BalanceWithdrawRequest struct {
 type BalanceResponse struct {
 	Current   float64 `json:"current"`
 	Withdrawn float64 `json:"withdrawn"`
+}
+type WithdrawalResponse struct {
+	Order       string    `json:"order"`
+	Sum         float64   `json:"sum"` // рубли
+	ProcessedAt time.Time `json:"processed_at"`
 }

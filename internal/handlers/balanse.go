@@ -16,15 +16,19 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	current, withdrawn, err := s.svc.GetUserBalance(r.Context(), userID)
+	currentCents, withdrawnCents, err := s.svc.GetUserBalance(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
+	// Конвертируем копейки в рубли
+	currentRub := float64(currentCents) / 100
+	withdrawnRub := float64(withdrawnCents) / 100
+
 	balance := models.BalanceResponse{
-		Current:   current,
-		Withdrawn: withdrawn,
+		Current:   currentRub,
+		Withdrawn: withdrawnRub,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -42,22 +46,27 @@ func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 
 	var req models.BalanceWithdrawRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Bad request: "+err.Error(), http.StatusBadRequest) // Добавим информацию об ошибке
+		http.Error(w, "Bad request: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	if req.Sum <= 0 {
+		http.Error(w, "Sum must be positive", http.StatusBadRequest)
+		return
+	}
+	if req.Order == "" {
+		http.Error(w, "Order must not be empty", http.StatusBadRequest)
 		return
 	}
 
-	if req.Order == "" || req.Sum <= 0 {
-		http.Error(w, "Order must not be empty and sum must be positive", http.StatusBadRequest)
-		return
-	}
-
-	// Проверка номера заказа по алгоритму Луна
 	if !isValidLuhn(req.Order) {
 		http.Error(w, "Invalid order number", http.StatusUnprocessableEntity)
 		return
 	}
 
-	err = s.svc.CreateWithdrawal(r.Context(), userID, req.Order, req.Sum) // Убираем преобразование типа
+	// Конвертируем рубли в копейки
+	sumCents := int64(req.Sum * 100)
+
+	err = s.svc.CreateWithdrawal(r.Context(), userID, req.Order, sumCents)
 	switch {
 	case errors.Is(err, models.ErrInsufficientFunds):
 		http.Error(w, "Insufficient funds", http.StatusPaymentRequired)

@@ -23,34 +23,37 @@ func (r *postgresRepo) GetOrderByNumber(
 	number string,
 ) (*models.OrderUser, error) {
 	var order models.OrderUser
+	var accrualCents sql.NullInt64
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT
-			number, status, accrual, uploaded_at
-		FROM orders
-		WHERE number = $1`,
+		`SELECT number, status, accrual, uploaded_at
+         FROM orders WHERE number = $1`,
 		number,
-	).Scan(&order.Number, &order.Status, &order.Accrual, &order.UploadedAt)
+	).Scan(&order.Number, &order.Status, &accrualCents, &order.UploadedAt)
+
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, err
 	}
+
+	if accrualCents.Valid {
+		order.Accrual = float64(accrualCents.Int64) / 100
+		order.AccrualCents = accrualCents.Int64
+	}
+
 	return &order, nil
 }
-
 func (r *postgresRepo) GetOrdersByUserID(
 	ctx context.Context,
 	userID int64,
 ) ([]models.OrderUser, error) {
 	rows, err := r.db.QueryContext(
 		ctx,
-		`SELECT
-			number, status, accrual, uploaded_at
-		FROM orders
-		WHERE user_id = $1
-		ORDER BY uploaded_at DESC`,
+		`SELECT number, status, accrual, uploaded_at
+         FROM orders WHERE user_id = $1
+         ORDER BY uploaded_at DESC`,
 		userID,
 	)
 	if err != nil {
@@ -61,9 +64,22 @@ func (r *postgresRepo) GetOrdersByUserID(
 	var orders []models.OrderUser
 	for rows.Next() {
 		var order models.OrderUser
-		if err := rows.Scan(&order.Number, &order.Status, &order.Accrual, &order.UploadedAt); err != nil {
+		var accrualCents sql.NullInt64
+
+		if err := rows.Scan(
+			&order.Number,
+			&order.Status,
+			&accrualCents,
+			&order.UploadedAt,
+		); err != nil {
 			return nil, err
 		}
+
+		if accrualCents.Valid {
+			order.Accrual = float64(accrualCents.Int64) / 100
+			order.AccrualCents = accrualCents.Int64
+		}
+
 		orders = append(orders, order)
 	}
 

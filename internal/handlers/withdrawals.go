@@ -1,13 +1,44 @@
 package handlers
 
-import "net/http"
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"github.com/iudanet/yp-diplom-1/internal/models"
+)
 
 func (s *Server) Withdrawals(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	userID, err := s.checkAuth(r)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	// Implement withdrawals logic here
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Withdrawals processed"))
+
+	withdrawals, err := s.svc.GetWithdrawals(r.Context(), userID)
+	if err != nil {
+		log.Printf("Failed to get withdrawals: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	if len(withdrawals) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	// Конвертируем копейки в рубли
+	response := make([]models.WithdrawalResponse, len(withdrawals))
+	for i, w := range withdrawals {
+		response[i] = models.WithdrawalResponse{
+			Order:       w.Order,
+			Sum:         float64(w.Sum) / 100,
+			ProcessedAt: w.ProcessedAt,
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
