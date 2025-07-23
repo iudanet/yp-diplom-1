@@ -66,3 +66,7 @@ func (s *service) GetUserBalance(
 ) (current, withdrawn float64, err error) {
 	return s.repo.GetUserBalance(ctx, userID)
 }
+
+func (s *service) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+	return s.repo.CreateWithdrawal(ctx, userID, orderNumber, sum)
+}

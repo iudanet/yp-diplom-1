@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
@@ -32,11 +34,37 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	userID, err := s.checkAuth(r)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	// Implement balance withdrawal logic here
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Balance withdrawn"))
+
+	var req models.BalanceWithdrawRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Bad request: "+err.Error(), http.StatusBadRequest) // Добавим информацию об ошибке
+		return
+	}
+
+	if req.Order == "" || req.Sum <= 0 {
+		http.Error(w, "Order must not be empty and sum must be positive", http.StatusBadRequest)
+		return
+	}
+
+	// Проверка номера заказа по алгоритму Луна
+	if !isValidLuhn(req.Order) {
+		http.Error(w, "Invalid order number", http.StatusUnprocessableEntity)
+		return
+	}
+
+	err = s.svc.CreateWithdrawal(r.Context(), userID, req.Order, req.Sum) // Убираем преобразование типа
+	switch {
+	case errors.Is(err, models.ErrInsufficientFunds):
+		http.Error(w, "Insufficient funds", http.StatusPaymentRequired)
+	case err != nil:
+		log.Printf("Failed to create withdrawal: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	default:
+		w.WriteHeader(http.StatusOK)
+	}
 }

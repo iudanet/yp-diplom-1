@@ -35,5 +35,5 @@ type UserService interface {
 
 	GetBalance() error
 	GetBalanceWithdrawals() error
-	CreateWithdraw() error
+	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error
 }

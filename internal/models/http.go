@@ -14,8 +14,8 @@ type RegisterRequest struct {
 
 // POST /api/user/balance/withdraw HTTP/1.1
 type BalanceWithdrawRequest struct {
-	Order string `json:"order"`
-	Sum   int64  `json:"sum"`
+	Order string  `json:"order"`
+	Sum   float64 `json:"sum"`
 }
 
 // GET /api/user/balance HTTP/1.1

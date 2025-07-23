@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
 )
@@ -67,4 +68,54 @@ func (r *postgresRepo) GetUserBalance(
 	}
 
 	return current, withdrawn, nil
+}
+
+func (r *postgresRepo) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Получаем сумму начислений
+	var accrued float64
+	err = tx.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(accrual), 0)
+         FROM orders
+         WHERE user_id = $1 AND status = $2`,
+		userID, models.OrderUserStatusProcessed,
+	).Scan(&accrued)
+	if err != nil {
+		return fmt.Errorf("failed to get accrued sum: %w", err)
+	}
+
+	// Получаем сумму списаний
+	var withdrawn float64
+	err = tx.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(sum), 0)
+         FROM withdrawals
+         WHERE user_id = $1`,
+		userID,
+	).Scan(&withdrawn)
+	if err != nil {
+		return fmt.Errorf("failed to get withdrawn sum: %w", err)
+	}
+
+	// Проверяем баланс
+	currentBalance := accrued - withdrawn
+	if currentBalance < sum {
+		return models.ErrInsufficientFunds
+	}
+
+	// Создаем списание
+	_, err = tx.ExecContext(ctx,
+		`INSERT INTO withdrawals (user_id, order_number, sum)
+         VALUES ($1, $2, $3)`,
+		userID, orderNumber, sum,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create withdrawal: %w", err)
+	}
+
+	return tx.Commit()
 }
