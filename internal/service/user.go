@@ -19,18 +19,6 @@ type service struct {
 	repo repo.Repositories
 }
 
-func (s *service) GetBalance() error {
-	return nil
-}
-
-func (s *service) GetBalanceWithdrawals() error {
-	return nil
-}
-
-func (s *service) CreateWithdraw() error {
-	return nil
-}
-
 func (s *service) Login(ctx context.Context, login, password string) (*models.UserAuth, error) {
 	user, err := s.repo.GetUserByLogin(ctx, login)
 	if err != nil {
