@@ -12,6 +12,303 @@ import (
 	models "github.com/iudanet/yp-diplom-1/internal/models"
 )
 
+// MockUserRepository is a mock of UserRepository interface.
+type MockUserRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserRepositoryMockRecorder
+}
+
+// MockUserRepositoryMockRecorder is the mock recorder for MockUserRepository.
+type MockUserRepositoryMockRecorder struct {
+	mock *MockUserRepository
+}
+
+// NewMockUserRepository creates a new mock instance.
+func NewMockUserRepository(ctrl *gomock.Controller) *MockUserRepository {
+	mock := &MockUserRepository{ctrl: ctrl}
+	mock.recorder = &MockUserRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateUser mocks base method.
+func (m *MockUserRepository) CreateUser(ctx context.Context, login, passwordHash string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUser", ctx, login, passwordHash)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockUserRepositoryMockRecorder) CreateUser(ctx, login, passwordHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), ctx, login, passwordHash)
+}
+
+// GetUserByID mocks base method.
+func (m *MockUserRepository) GetUserByID(ctx context.Context, id int64) (*models.UserAuth, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByID", ctx, id)
+	ret0, _ := ret[0].(*models.UserAuth)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockUserRepositoryMockRecorder) GetUserByID(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockUserRepository)(nil).GetUserByID), ctx, id)
+}
+
+// GetUserByLogin mocks base method.
+func (m *MockUserRepository) GetUserByLogin(ctx context.Context, login string) (*models.UserAuth, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByLogin", ctx, login)
+	ret0, _ := ret[0].(*models.UserAuth)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByLogin indicates an expected call of GetUserByLogin.
+func (mr *MockUserRepositoryMockRecorder) GetUserByLogin(ctx, login interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByLogin", reflect.TypeOf((*MockUserRepository)(nil).GetUserByLogin), ctx, login)
+}
+
+// MockOrderRepository is a mock of OrderRepository interface.
+type MockOrderRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockOrderRepositoryMockRecorder
+}
+
+// MockOrderRepositoryMockRecorder is the mock recorder for MockOrderRepository.
+type MockOrderRepositoryMockRecorder struct {
+	mock *MockOrderRepository
+}
+
+// NewMockOrderRepository creates a new mock instance.
+func NewMockOrderRepository(ctrl *gomock.Controller) *MockOrderRepository {
+	mock := &MockOrderRepository{ctrl: ctrl}
+	mock.recorder = &MockOrderRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockOrderRepository) EXPECT() *MockOrderRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateOrder mocks base method.
+func (m *MockOrderRepository) CreateOrder(ctx context.Context, userID int64, number string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOrder", ctx, userID, number)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOrder indicates an expected call of CreateOrder.
+func (mr *MockOrderRepositoryMockRecorder) CreateOrder(ctx, userID, number interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockOrderRepository)(nil).CreateOrder), ctx, userID, number)
+}
+
+// GetOrderByNumber mocks base method.
+func (m *MockOrderRepository) GetOrderByNumber(ctx context.Context, number string) (*models.OrderUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrderByNumber", ctx, number)
+	ret0, _ := ret[0].(*models.OrderUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrderByNumber indicates an expected call of GetOrderByNumber.
+func (mr *MockOrderRepositoryMockRecorder) GetOrderByNumber(ctx, number interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrderByNumber", reflect.TypeOf((*MockOrderRepository)(nil).GetOrderByNumber), ctx, number)
+}
+
+// GetOrderOwner mocks base method.
+func (m *MockOrderRepository) GetOrderOwner(ctx context.Context, number string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrderOwner", ctx, number)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrderOwner indicates an expected call of GetOrderOwner.
+func (mr *MockOrderRepositoryMockRecorder) GetOrderOwner(ctx, number interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrderOwner", reflect.TypeOf((*MockOrderRepository)(nil).GetOrderOwner), ctx, number)
+}
+
+// GetOrdersByUserID mocks base method.
+func (m *MockOrderRepository) GetOrdersByUserID(ctx context.Context, userID int64) ([]models.OrderUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrdersByUserID", ctx, userID)
+	ret0, _ := ret[0].([]models.OrderUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrdersByUserID indicates an expected call of GetOrdersByUserID.
+func (mr *MockOrderRepositoryMockRecorder) GetOrdersByUserID(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrdersByUserID", reflect.TypeOf((*MockOrderRepository)(nil).GetOrdersByUserID), ctx, userID)
+}
+
+// GetOrdersForProcessing mocks base method.
+func (m *MockOrderRepository) GetOrdersForProcessing(ctx context.Context, limit int) ([]models.OrderUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrdersForProcessing", ctx, limit)
+	ret0, _ := ret[0].([]models.OrderUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOrdersForProcessing indicates an expected call of GetOrdersForProcessing.
+func (mr *MockOrderRepositoryMockRecorder) GetOrdersForProcessing(ctx, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrdersForProcessing", reflect.TypeOf((*MockOrderRepository)(nil).GetOrdersForProcessing), ctx, limit)
+}
+
+// UpdateOrderAccrual mocks base method.
+func (m *MockOrderRepository) UpdateOrderAccrual(ctx context.Context, number string, status models.OrderUserStatus, accrualCents int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateOrderAccrual", ctx, number, status, accrualCents)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateOrderAccrual indicates an expected call of UpdateOrderAccrual.
+func (mr *MockOrderRepositoryMockRecorder) UpdateOrderAccrual(ctx, number, status, accrualCents interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOrderAccrual", reflect.TypeOf((*MockOrderRepository)(nil).UpdateOrderAccrual), ctx, number, status, accrualCents)
+}
+
+// UpdateOrderStatus mocks base method.
+func (m *MockOrderRepository) UpdateOrderStatus(ctx context.Context, number string, status models.OrderUserStatus) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateOrderStatus", ctx, number, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateOrderStatus indicates an expected call of UpdateOrderStatus.
+func (mr *MockOrderRepositoryMockRecorder) UpdateOrderStatus(ctx, number, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOrderStatus", reflect.TypeOf((*MockOrderRepository)(nil).UpdateOrderStatus), ctx, number, status)
+}
+
+// MockBalanceRepository is a mock of BalanceRepository interface.
+type MockBalanceRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockBalanceRepositoryMockRecorder
+}
+
+// MockBalanceRepositoryMockRecorder is the mock recorder for MockBalanceRepository.
+type MockBalanceRepositoryMockRecorder struct {
+	mock *MockBalanceRepository
+}
+
+// NewMockBalanceRepository creates a new mock instance.
+func NewMockBalanceRepository(ctrl *gomock.Controller) *MockBalanceRepository {
+	mock := &MockBalanceRepository{ctrl: ctrl}
+	mock.recorder = &MockBalanceRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockBalanceRepository) EXPECT() *MockBalanceRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateWithdrawal mocks base method.
+func (m *MockBalanceRepository) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateWithdrawal", ctx, userID, orderNumber, sum)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateWithdrawal indicates an expected call of CreateWithdrawal.
+func (mr *MockBalanceRepositoryMockRecorder) CreateWithdrawal(ctx, userID, orderNumber, sum interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWithdrawal", reflect.TypeOf((*MockBalanceRepository)(nil).CreateWithdrawal), ctx, userID, orderNumber, sum)
+}
+
+// GetUserBalance mocks base method.
+func (m *MockBalanceRepository) GetUserBalance(ctx context.Context, userID int64) (int64, int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserBalance", ctx, userID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetUserBalance indicates an expected call of GetUserBalance.
+func (mr *MockBalanceRepositoryMockRecorder) GetUserBalance(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserBalance", reflect.TypeOf((*MockBalanceRepository)(nil).GetUserBalance), ctx, userID)
+}
+
+// GetWithdrawals mocks base method.
+func (m *MockBalanceRepository) GetWithdrawals(ctx context.Context, userID int64) ([]models.WithdrawalDB, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWithdrawals", ctx, userID)
+	ret0, _ := ret[0].([]models.WithdrawalDB)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWithdrawals indicates an expected call of GetWithdrawals.
+func (mr *MockBalanceRepositoryMockRecorder) GetWithdrawals(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWithdrawals", reflect.TypeOf((*MockBalanceRepository)(nil).GetWithdrawals), ctx, userID)
+}
+
+// MockMigrator is a mock of Migrator interface.
+type MockMigrator struct {
+	ctrl     *gomock.Controller
+	recorder *MockMigratorMockRecorder
+}
+
+// MockMigratorMockRecorder is the mock recorder for MockMigrator.
+type MockMigratorMockRecorder struct {
+	mock *MockMigrator
+}
+
+// NewMockMigrator creates a new mock instance.
+func NewMockMigrator(ctrl *gomock.Controller) *MockMigrator {
+	mock := &MockMigrator{ctrl: ctrl}
+	mock.recorder = &MockMigratorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockMigrator) EXPECT() *MockMigratorMockRecorder {
+	return m.recorder
+}
+
+// Migrate mocks base method.
+func (m *MockMigrator) Migrate(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Migrate", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Migrate indicates an expected call of Migrate.
+func (mr *MockMigratorMockRecorder) Migrate(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Migrate", reflect.TypeOf((*MockMigrator)(nil).Migrate), ctx)
+}
+
 // MockRepositories is a mock of Repositories interface.
 type MockRepositories struct {
 	ctrl     *gomock.Controller
