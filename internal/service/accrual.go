@@ -16,6 +16,11 @@ const (
 	maxAccrualRetries            = 3
 )
 
+var _ AccrualClientInterface = (*AccrualClient)(nil)
+
+type AccrualClientInterface interface {
+	GetOrderAccrual(ctx context.Context, orderNumber string) (*models.OrderAccrualResponse, error)
+}
 type AccrualClient struct {
 	baseURL    string
 	httpClient *http.Client

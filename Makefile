@@ -20,6 +20,7 @@ statictest::
 mock_gen::
 	mockgen -source=internal/service/models.go -destination=internal/service/mock_service/mock_service.go -package=mock_service
 	mockgen -source=internal/repo/repo.go -destination=internal/repo/mock_repo/mock_repo.go -package=mock_repo
+	mockgen -source=internal/service/accrual.go -destination=internal/service/mock_service/accrual_client_mock.go -package=mock_service
 
 golangci::
 	golangci-lint run ./...

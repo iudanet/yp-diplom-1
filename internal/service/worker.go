@@ -12,13 +12,13 @@ import (
 
 type Worker struct {
 	repo          repo.Repositories
-	accrualClient *AccrualClient
+	accrualClient AccrualClientInterface
 	batchSize     int
 	pollInterval  time.Duration
 	logger        *log.Logger
 }
 
-func NewWorker(repo repo.Repositories, accrualClient *AccrualClient) *Worker {
+func NewWorker(repo repo.Repositories, accrualClient AccrualClientInterface) *Worker {
 	return &Worker{
 		repo:          repo,
 		accrualClient: accrualClient,
