@@ -21,7 +21,7 @@ func TestService_Register(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			name:     "successful registration",
+			name:     "successfulRegistration",
 			login:    "newuser",
 			password: "password",
 			mockSetup: func(mock *mock_repo.MockRepositories) {
@@ -80,7 +80,7 @@ func TestService_Login(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			name:     "successful login",
+			name:     "invalidCredentials",
 			login:    "user",
 			password: "correct",
 			mockSetup: func(mock *mock_repo.MockRepositories) {

@@ -16,7 +16,7 @@ func TestConfig(t *testing.T) {
 		check    func(t *testing.T, cfg *Config)
 	}{
 		{
-			name:   "default_values",
+			name:   "defaultValues",
 			config: New(),
 			check: func(t *testing.T, cfg *Config) {
 				assert.Equal(t, "localhost:8080", cfg.HTTPAddress)
@@ -29,7 +29,7 @@ func TestConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "flag_parsing",
+			name: "flagParsing",
 			setup: func() {
 				oldArgs := os.Args
 				os.Args = []string{
@@ -49,7 +49,7 @@ func TestConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "env_parsing",
+			name: "envParsing",
 			setup: func() {
 				err := os.Setenv("RUN_ADDRESS", "localhost:9091")
 				assert.NoError(t, err)
@@ -75,7 +75,7 @@ func TestConfig(t *testing.T) {
 			},
 		},
 		{
-			name:   "string_representation",
+			name:   "stringRepresentation",
 			config: New(),
 			check: func(t *testing.T, cfg *Config) {
 				// expected := "HTTPAddress: localhost:8080, DatabaseURI: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable, AccrualSystemAddress: http://localhost:8081"

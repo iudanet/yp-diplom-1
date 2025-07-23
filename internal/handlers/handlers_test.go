@@ -26,7 +26,7 @@ func TestServer_Register(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "successful registration",
+			name: "successfulRegistration",
 			request: models.RegisterRequest{
 				Login:    "testuser",
 				Password: "testpass",
@@ -40,7 +40,7 @@ func TestServer_Register(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name: "empty login or password",
+			name: "emptyLoginOrPassword",
 			request: models.RegisterRequest{
 				Login:    "",
 				Password: "",
@@ -49,7 +49,7 @@ func TestServer_Register(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name: "user_already_exists",
+			name: "userAlreadyExists",
 			request: models.RegisterRequest{
 				Login:    "existing",
 				Password: "testpass",
@@ -98,7 +98,7 @@ func TestServer_Login(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "successful login",
+			name: "invalidCredentials",
 			request: models.LoginRequest{
 				Login:    "testuser",
 				Password: "testpass",

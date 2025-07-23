@@ -62,14 +62,7 @@ func (c *AccrualClient) GetOrderAccrual(
 		case http.StatusNoContent:
 			return nil, nil
 		case http.StatusTooManyRequests:
-			retryAfter := defaultAccrualRetryInterval
-			if retryHeader := httpResp.Header.Get("Retry-After"); retryHeader != "" {
-				if seconds, err := time.ParseDuration(retryHeader + "s"); err == nil {
-					retryAfter = seconds
-				}
-			}
-			time.Sleep(retryAfter)
-			continue
+			return nil, fmt.Errorf("too many requests to accrual system")
 		default:
 			return nil, fmt.Errorf("unexpected status code: %d", httpResp.StatusCode)
 		}
