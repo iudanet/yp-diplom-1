@@ -39,7 +39,7 @@ func TestService_Register(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:     "user already exists",
+			name:     "userAlreadyExists",
 			login:    "existing",
 			password: "password",
 			mockSetup: func(mock *mock_repo.MockRepositories) {
@@ -92,7 +92,7 @@ func TestService_Login(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:     "wrong password",
+			name:     "wrongPassword",
 			login:    "user",
 			password: "wrong",
 			mockSetup: func(mock *mock_repo.MockRepositories) {
@@ -134,7 +134,7 @@ func TestService_CreateOrder(t *testing.T) {
 		wantErr   error
 	}{
 		{
-			name:   "successful order creation",
+			name:   "successfulOrderCreation",
 			userID: 1,
 			number: "4561261212345467", // Valid Luhn
 			mockSetup: func(mock *mock_repo.MockRepositories) {
@@ -144,7 +144,7 @@ func TestService_CreateOrder(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name:   "invalid order number",
+			name:   "invalidOrderNumber",
 			userID: 1,
 			number: "123",
 			mockSetup: func(mock *mock_repo.MockRepositories) {

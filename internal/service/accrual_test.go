@@ -20,7 +20,7 @@ func TestAccrualClient_GetOrderAccrual(t *testing.T) {
 		expectError    bool
 	}{
 		{
-			name: "successful response",
+			name: "successfulResponse",
 			serverHandler: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
 				_, _ = w.Write([]byte(`{"order":"123","status":"PROCESSED","accrual":100.5}`))
@@ -34,7 +34,7 @@ func TestAccrualClient_GetOrderAccrual(t *testing.T) {
 			expectError: false,
 		},
 		{
-			name: "order not found",
+			name: "orderNotFound",
 			serverHandler: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusNoContent)
 			},
@@ -43,7 +43,7 @@ func TestAccrualClient_GetOrderAccrual(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name: "too many requests",
+			name: "tooManyRequests",
 			serverHandler: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusTooManyRequests)
 				w.Header().Set("Retry-After", "1")

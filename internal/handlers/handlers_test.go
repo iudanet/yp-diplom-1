@@ -111,7 +111,7 @@ func TestServer_Login(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name: "invalid credentials",
+			name: "invalidCredentials",
 			request: models.LoginRequest{
 				Login:    "testuser",
 				Password: "wrongpass",
@@ -119,7 +119,7 @@ func TestServer_Login(t *testing.T) {
 			mockSetup: func(mock *mock_service.MockService) {
 				mock.EXPECT().
 					Login(gomock.Any(), "testuser", "wrongpass").
-					Return(nil, errors.New("invalid credentials"))
+					Return(nil, errors.New("invalidCredentials"))
 			},
 			expectedStatus: http.StatusUnauthorized,
 		},
@@ -160,7 +160,7 @@ func TestServer_PostOrders(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:        "successful order upload",
+			name:        "successfulOrderUpload",
 			orderNumber: "4561261212345467", // Valid Luhn number
 			mockSetup: func(mock *mock_service.MockService) {
 				mock.EXPECT().CreateOrder(gomock.Any(), int64(1), "4561261212345467").Return(nil)
@@ -168,7 +168,7 @@ func TestServer_PostOrders(t *testing.T) {
 			expectedStatus: http.StatusAccepted,
 		},
 		{
-			name:           "invalid order number",
+			name:           "invalidOrderNumber",
 			orderNumber:    "123",
 			mockSetup:      func(mock *mock_service.MockService) {},
 			expectedStatus: http.StatusUnprocessableEntity,

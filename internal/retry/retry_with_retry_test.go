@@ -16,14 +16,14 @@ func TestWithRetry(t *testing.T) {
 		wantError bool
 	}{
 		{
-			name: "Success_on_first_attempt",
+			name: "successOnFirstAttempt",
 			op: func() error {
 				return nil
 			},
 			wantError: false,
 		},
 		{
-			name: "Retriable_error_then_success",
+			name: "retriableErrorThenSuccess",
 			op: func() func() error {
 				attempt := 0
 				return func() error {
@@ -37,14 +37,14 @@ func TestWithRetry(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "Non-retriable error",
+			name: "nonRetriableError",
 			op: func() error {
 				return errors.New("non-retriable error")
 			},
 			wantError: true,
 		},
 		{
-			name: "All_attempts_fail",
+			name: "allAttemptsFail",
 			op: func() error {
 				return &pq.Error{Code: pgerrcode.ConnectionException}
 			},

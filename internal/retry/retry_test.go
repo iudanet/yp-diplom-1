@@ -31,12 +31,12 @@ func TestIsRetriableError(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "HTTP500Error",
+			name:     "http500Error",
 			err:      &mockHTTPError{statusCode: 500},
 			expected: true,
 		},
 		{
-			name:     "HTTP400Error",
+			name:     "http400Error",
 			err:      &mockHTTPError{statusCode: 400},
 			expected: false,
 		},
@@ -61,12 +61,12 @@ func TestIsRetriableError(t *testing.T) {
 			expected: false,
 		},
 		{
-			name:     "non-retriableError",
+			name:     "nonRetriableError",
 			err:      errors.New("some error"),
 			expected: false,
 		},
 		{
-			name:     "invalid_connection_error",
+			name:     "invalidConnectionError",
 			err:      errors.New("invalid connection"),
 			expected: false,
 		},
@@ -85,7 +85,7 @@ func TestIsRetriableError(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "non-retriablePqError",
+			name:     "nonRetriablePqError",
 			err:      &pq.Error{Code: "23505"}, // unique_violation
 			expected: false,
 		},

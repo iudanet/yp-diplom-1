@@ -13,27 +13,27 @@ func TestIsValidLuhn(t *testing.T) {
 		isValid bool
 	}{
 		{
-			name:    "valid number",
+			name:    "validNumber",
 			number:  "4561261212345467",
 			isValid: true,
 		},
 		{
-			name:    "invalid number",
+			name:    "invalidNumber",
 			number:  "4561261212345464",
 			isValid: false,
 		},
 		{
-			name:    "empty string",
+			name:    "emptyString",
 			number:  "",
 			isValid: false,
 		},
 		{
-			name:    "non-numeric",
+			name:    "nonNumeric",
 			number:  "abc",
 			isValid: false,
 		},
 		{
-			name:    "invalid characters",
+			name:    "invalidCharacters",
 			number:  "4561-2612-1234-5467",
 			isValid: false,
 		},
@@ -53,17 +53,17 @@ func TestRoundToTwoDecimals(t *testing.T) {
 		expected float64
 	}{
 		{
-			name:     "round down",
+			name:     "roundDown",
 			input:    123.456,
 			expected: 123.46,
 		},
 		{
-			name:     "round up",
+			name:     "roundUp",
 			input:    123.455,
 			expected: 123.46,
 		},
 		{
-			name:     "no rounding needed",
+			name:     "noRoundingNeeded",
 			input:    123.45,
 			expected: 123.45,
 		},
