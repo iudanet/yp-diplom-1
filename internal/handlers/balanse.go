@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"math"
 	"net/http"
 
 	"github.com/iudanet/yp-diplom-1/internal/models"
@@ -17,30 +16,21 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currentCents, withdrawnCents, err := s.svc.GetUserBalance(r.Context(), userID)
+	currentRub, withdrawnRub, err := s.svc.GetUserBalance(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	// Конвертируем копейки в рубли с точностью до 2 знаков
-	currentRub := float64(currentCents) / 100
-	withdrawnRub := float64(withdrawnCents) / 100
-
 	balance := models.BalanceResponse{
-		Current:   roundToTwoDecimals(currentRub),
-		Withdrawn: roundToTwoDecimals(withdrawnRub),
+		Current:   currentRub,
+		Withdrawn: withdrawnRub,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(balance); err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
-}
-
-// Вспомогательная функция для округления до 2 знаков
-func roundToTwoDecimals(value float64) float64 {
-	return math.Round(value*100) / 100
 }
 
 func (s *Server) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {

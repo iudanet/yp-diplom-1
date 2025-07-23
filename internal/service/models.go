@@ -31,7 +31,7 @@ type OrderService interface {
 	GetOrders(ctx context.Context, userID int64) ([]models.OrderUser, error)
 }
 type UserService interface {
-	GetUserBalance(ctx context.Context, userID int64) (current, withdrawn int64, err error)
+	GetUserBalance(ctx context.Context, userID int64) (current, withdrawn float64, err error)
 
 	GetBalance() error
 	GetWithdrawals(ctx context.Context, userID int64) ([]models.WithdrawalDB, error)

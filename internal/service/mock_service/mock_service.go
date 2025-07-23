@@ -93,11 +93,11 @@ func (mr *MockServiceMockRecorder) GetOrders(ctx, userID interface{}) *gomock.Ca
 }
 
 // GetUserBalance mocks base method.
-func (m *MockService) GetUserBalance(ctx context.Context, userID int64) (int64, int64, error) {
+func (m *MockService) GetUserBalance(ctx context.Context, userID int64) (float64, float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserBalance", ctx, userID)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(int64)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(float64)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
@@ -308,11 +308,11 @@ func (mr *MockUserServiceMockRecorder) GetBalance() *gomock.Call {
 }
 
 // GetUserBalance mocks base method.
-func (m *MockUserService) GetUserBalance(ctx context.Context, userID int64) (int64, int64, error) {
+func (m *MockUserService) GetUserBalance(ctx context.Context, userID int64) (float64, float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserBalance", ctx, userID)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(int64)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(float64)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }

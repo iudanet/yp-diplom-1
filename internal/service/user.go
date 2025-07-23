@@ -63,9 +63,13 @@ func (s *service) Register(ctx context.Context, login, password string) error {
 func (s *service) GetUserBalance(
 	ctx context.Context,
 	userID int64,
-) (current, withdrawn int64, err error) {
+) (current, withdrawn float64, err error) {
 	currentCents, withdrawnCents, err := s.repo.GetUserBalance(ctx, userID)
-	return int64(currentCents), int64(withdrawnCents), err
+
+	// Конвертируем копейки в рубли с точностью до 2 знаков
+	currentRub := roundToTwoDecimals(float64(currentCents) / 100)
+	withdrawnRub := roundToTwoDecimals(float64(withdrawnCents) / 100)
+	return currentRub, withdrawnRub, err
 }
 
 func (s *service) CreateWithdrawal(
